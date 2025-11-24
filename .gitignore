@@ -39,3 +39,17 @@
 
 # debug information files
 *.dwo
+
+# Ignorar carpeta de compilación
+build/
+
+# Ignorar configuraciones de usuario
+sdkconfig
+sdkconfig.old
+
+# Ignorar archivos de IDE
+.vscode/
+.idea/
+
+# Ignorar archivos temporales de Python
+__pycache__/
