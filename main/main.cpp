@@ -1,31 +1,57 @@
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "driver/i2c.h"
 #include "esp_log.h"
 
-// INCLUIMOS NUESTRO NUEVO DRIVER
+// Incluimos AMBOS drivers
 #include "bme280_driver.h"
+#include "mpu6050_driver.h"
 
-static const char *TAG = "MAIN_APP";
+static const char *TAG = "MAIN";
+
+// Configuración global del I2C
+#define I2C_MASTER_SCL_IO           2     // Pin SCL
+#define I2C_MASTER_SDA_IO           1     // Pin SDA
+#define I2C_MASTER_NUM              I2C_NUM_0
+#define I2C_MASTER_FREQ_HZ          100000
+
+void i2c_master_init() {
+    i2c_config_t conf = {};
+    conf.mode = I2C_MODE_MASTER;
+    conf.sda_io_num = I2C_MASTER_SDA_IO;
+    conf.scl_io_num = I2C_MASTER_SCL_IO;
+    conf.sda_pullup_en = GPIO_PULLUP_ENABLE;
+    conf.scl_pullup_en = GPIO_PULLUP_ENABLE;
+    conf.master.clk_speed = I2C_MASTER_FREQ_HZ;
+    i2c_param_config(I2C_MASTER_NUM, &conf);
+    i2c_driver_install(I2C_MASTER_NUM, conf.mode, 0, 0, 0);
+    ESP_LOGI(TAG, "I2C Bus inicializado en SDA:%d SCL:%d", I2C_MASTER_SDA_IO, I2C_MASTER_SCL_IO);
+}
 
 extern "C" void app_main(void)
 {
     setvbuf(stdout, NULL, _IONBF, 0);
-    ESP_LOGI(TAG, "--- INICIANDO SISTEMA MODULAR ---");
+    
+    // 1. Iniciar el Bus Compartido
+    i2c_master_init();
 
-    // 1. Instanciamos el objeto (pines I2C virtuales: SDA=1, SCL=2)
-    Bme280Driver sensor(1, 2);
+    // 2. Instanciar sensores pasando el puerto
+    Bme280Driver bme(I2C_MASTER_NUM);
+    Mpu6050Driver mpu(I2C_MASTER_NUM);
 
-    // 2. Inicializamos el sensor
-    sensor.init();
+    // 3. Verificar MPU6050 (El que sí se ve en Wokwi)
+    if (mpu.testConnection()) {
+        ESP_LOGI(TAG, "✅ MPU6050 Online!");
+    } else {
+        ESP_LOGE(TAG, "❌ MPU6050 No responde");
+    }
 
-    int i = 0;
+    // 4. Verificar BME280 (El fantasma visual, pero probamos si responde)
+    // (Asegúrate de que bme.init() ya no intente configurar pines, solo lógica interna si la hay)
+    
     while(1) {
-        // 3. Usamos el método del objeto para obtener el dato
-        float temp = sensor.readTemperature();
-
-        ESP_LOGI(TAG, "Ciclo: %d | Temperatura Sala de Servidores: %.2f °C", i++, temp);
-        
-        vTaskDelay(pdMS_TO_TICKS(1000));
+        // Aquí leeremos ambos en el futuro
+        vTaskDelay(pdMS_TO_TICKS(2000));
     }
 }

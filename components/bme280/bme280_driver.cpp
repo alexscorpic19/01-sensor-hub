@@ -3,28 +3,31 @@
 
 static const char *TAG = "BME280_DRIVER";
 
-// Implementación del Constructor
-Bme280Driver::Bme280Driver(int sda, int scl) {
-    _sda_pin = sda;
-    _scl_pin = scl;
-    _simulated_temp = 20.0f; // Temperatura inicial
+// Constructor: Solo guardamos el puerto
+Bme280Driver::Bme280Driver(i2c_port_t port) {
+    _i2c_port = port;
 }
 
-// Implementación de init
+// Init: Ya no configura hardware (lo hace el main), solo lógica del sensor
 esp_err_t Bme280Driver::init() {
-    ESP_LOGI(TAG, "Inicializando BME280 en pines SDA:%d SCL:%d", _sda_pin, _scl_pin);
-    // Mañana aquí pondremos la configuración real de I2C
+    ESP_LOGI(TAG, "Driver BME280 instanciado en puerto %d", _i2c_port);
     return ESP_OK;
 }
 
-// Implementación de lectura
-float Bme280Driver::readTemperature() {
-    // Simulamos que la temperatura sube un poco en cada lectura
-    _simulated_temp += 0.5f;
-    
-    // Reiniciamos si sube mucho
-    if (_simulated_temp > 40.0f) _simulated_temp = 20.0f;
+esp_err_t Bme280Driver::read_register(uint8_t reg_addr, uint8_t *data, size_t len) {
+    // Aquí usamos _i2c_port en lugar de la constante I2C_NUM_0
+    return i2c_master_write_read_device(_i2c_port, 
+                                        BME280_SENSOR_ADDR, 
+                                        &reg_addr, 1, 
+                                        data, len, 
+                                        1000 / portTICK_PERIOD_MS);
+}
 
-    ESP_LOGD(TAG, "Leyendo sensor... Valor: %.2f", _simulated_temp);
-    return _simulated_temp;
+uint8_t Bme280Driver::read_chip_id() {
+    uint8_t id = 0;
+    esp_err_t err = read_register(BME280_CHIP_ID_REG, &id, 1);
+    if (err == ESP_OK) {
+        ESP_LOGI(TAG, "Chip ID: 0x%X", id);
+    }
+    return id;
 }
