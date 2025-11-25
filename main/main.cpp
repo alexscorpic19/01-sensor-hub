@@ -3,23 +3,29 @@
 #include "freertos/task.h"
 #include "esp_log.h"
 
-// Etiqueta para logs
-static const char *TAG = "SENSOR_HUB";
+// INCLUIMOS NUESTRO NUEVO DRIVER
+#include "bme280_driver.h"
+
+static const char *TAG = "MAIN_APP";
 
 extern "C" void app_main(void)
 {
-    // CONFIGURACIÓN PRO: Desactivar buffer para ver prints inmediatos en Windows
     setvbuf(stdout, NULL, _IONBF, 0);
+    ESP_LOGI(TAG, "--- INICIANDO SISTEMA MODULAR ---");
 
-    ESP_LOGI(TAG, "--- INICIO SISTEMA (WINDOWS) ---");
-    ESP_LOGI(TAG, "Hardware: ESP32-S3");
+    // 1. Instanciamos el objeto (pines I2C virtuales: SDA=1, SCL=2)
+    Bme280Driver sensor(1, 2);
+
+    // 2. Inicializamos el sensor
+    sensor.init();
 
     int i = 0;
     while(1) {
-        // Log con formato de Espressif
-        ESP_LOGI(TAG, "El sistema funciona correctamente. Ciclo: %d", i++);
+        // 3. Usamos el método del objeto para obtener el dato
+        float temp = sensor.readTemperature();
+
+        ESP_LOGI(TAG, "Ciclo: %d | Temperatura Sala de Servidores: %.2f °C", i++, temp);
         
-        // Pausa de 1 segundo
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }

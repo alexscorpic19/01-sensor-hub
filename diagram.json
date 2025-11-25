@@ -3,10 +3,27 @@
   "author": "Jhon Hernandez",
   "editor": "wokwi",
   "parts": [
-    { "type": "board-esp32-s3-devkitc-1", "id": "esp", "top": 0, "left": 0, "attrs": {} }
+    {
+      "type": "board-esp32-s3-devkitc-1",
+      "id": "esp",
+      "top": 0,
+      "left": 0,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-bme280", 
+      "id": "bme1",
+      "top": 0,
+      "left": 200,
+      "attrs": { "address": "0x77" }
+    }
   ],
   "connections": [
     [ "esp:TX", "$serialMonitor:RX", "", [] ],
-    [ "esp:RX", "$serialMonitor:TX", "", [] ]
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "esp:1", "bme1:SDA", "green", [ "v0" ] ],
+    [ "esp:2", "bme1:SCL", "yellow", [ "v0" ] ],
+    [ "esp:3V3", "bme1:VCC", "red", [ "v0" ] ],
+    [ "esp:GND", "bme1:GND", "black", [ "v0" ] ]
   ]
 }
