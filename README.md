@@ -16,6 +16,8 @@ This project demonstrates a complete **End-to-End IoT solution**, bridging the g
 ---
 
 ## 📦 Hardware Components
+![PCB Render](docs/img/pcb-3d-render.png)
+*(Custom Carrier Board Design - Designed in KiCad 9)*
 
 | Component | Description |
 |-----------|-------------|

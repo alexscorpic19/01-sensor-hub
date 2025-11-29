@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "Mis_Componentes")(type "KiCad")(uri "C:/Users/alex/proyectos-iot/01-sensor-hub/hardware/libs/Mis_Componentes.pretty")(options "")(descr ""))
+)

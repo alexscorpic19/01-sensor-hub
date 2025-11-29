@@ -53,3 +53,17 @@ sdkconfig.old
 
 # Ignorar archivos temporales de Python
 __pycache__/
+
+# --- KICAD IGNORE LIST ---
+# Archivos temporales y backups
+*.lck
+*.bak
+*.kicad_pcb-bak
+*.kicad_sch-bak
+_autosave-*
+*.kicad_prl
+fp-info-cache
+
+# Carpetas de backup
+*-backups/
+hardware/sensor-hub-carrier/report.txt
