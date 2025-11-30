@@ -54,8 +54,8 @@
       "diff_pair_dimensions": [],
       "drc_exclusions": [
         [
-          "courtyards_overlap|70075000|108233000|3ff3522b-f55d-4d24-92d3-e1eb81ee1d60|ba47eab1-9400-447f-8765-40b92ac42049",
-          "Las alturas son diferentes, por lo tanto no afecta el modulo esp32 S3"
+          "courtyards_overlap|59915000|155985000|3ff3522b-f55d-4d24-92d3-e1eb81ee1d60|ba47eab1-9400-447f-8765-40b92ac42049",
+          "la recistencia no se sola[pa, esta debajo del modulo esp32"
         ]
       ],
       "meta": {

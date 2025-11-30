@@ -1,38 +1,88 @@
-# 🏭 Industrial IoT Sensor Hub (01-sensor-hub)
+# 🏭 **Industrial IoT Sensor Hub (v1.1)**
 
-**High-Performance Data Acquisition System with ESP32-S3 & FreeRTOS.**
+### **High-Performance Data Acquisition System with ESP32-S3 & FreeRTOS**
 
-This project demonstrates a complete **End-to-End IoT solution**, bridging the gap between embedded hardware (C++) and modern web visualization (React).
+Este proyecto demuestra una solución IoT **End-to-End**, conectando
+hardware embebido (C++) con visualización web moderna (React).
 
-## 🖥️ Real-Time Dashboard Interface
+------------------------------------------------------------------------
+
+## 🖥️ **Real-Time Dashboard Interface**
 
 ![Dashboard Preview](docs/img/dashboard-preview.png)
 
-*   **Communication:** Connects directly to HiveMQ Cloud via **Secure WebSockets (WSS)**.
-*   **Latency:** Real-time updates (<100ms) from the ESP32-S3.
-*   **Data Visualization:** Displays synchronized environmental (BME280) and inertial (MPU6050) sensor data.
-*   **Protocol:** Decodes JSON payloads directly in the browser.
+-   **Communication:** Conexión directa a HiveMQ Cloud vía **Secure
+    WebSockets (WSS)**\
+-   **Latency:** Actualizaciones en tiempo real (\<100ms) desde el
+    ESP32-S3\
+-   **Data Visualization:** Lectura sincronizada de sensores ambientales
+    (BME280) e inerciales (MPU6050)\
+-   **Protocol:** Decodificación de JSON directamente en navegador
 
----
+------------------------------------------------------------------------
 
-## 📦 Hardware Components
-![PCB Render](docs/img/pcb-3d-render.png)
-*(Custom Carrier Board Design - Designed in KiCad 9)*
+## 📦 **Hardware Revision v1.1 --- Carrier Board**
 
-| Component | Description |
-|-----------|-------------|
-| **ESP32-S3** | Dual-core microcontroller (Xtensa LX7) with Wi-Fi + BLE 5.0 |
-| **BME280** | Precision environmental sensor (Temp, Humidity, Pressure) via I2C |
-| **MPU6050** | 6-axis Motion Tracking device (Accelerometer + Gyroscope) via I2C |
-| **HiveMQ Cloud** | Enterprise MQTT Broker for secure telemetry routing (TLS) |
+La placa contiene un diseño modular que integra ESP32-S3, sensores,
+etapa de potencia y puertos de expansión.
 
----
+### ⚡ Schematic & PCB Layout
 
-## 📂 Project Structure (ESP-IDF Standard)
+<table>
+  <tr>
+    <td align="center"><strong>3D Render (Physical)</strong></td>
+    <td align="center"><strong>Schematic (Logical)</strong></td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="docs/img/pcb-3d-render.png" width="400">
+    </td>
+    <td align="center">
+      <img src="docs/img/schematic-v1.1.png" width="400">
+    </td>
+  </tr>
+  <tr>
+    <td align="center"><em>Designed in KiCad 9 — Raytracing Render</em></td>
+    <td align="center"><em>Low-Side Switch & I²C Bus Topology</em></td>
+  </tr>
+</table>
 
-The project follows the official **Espressif IoT Development Framework** modular architecture:
+### 🔩 **Technical Specs**
 
-```text
+  -----------------------------------------------------------------------
+  Subsystem             Components              Description
+  --------------------- ----------------------- -------------------------
+  **MCU Core**          ESP32-S3-DevKitC-1      Dual-core Xtensa LX7 @
+                                                240MHz, WiFi + BLE 5.0
+
+  **Inertial**          MPU6050                 6-Axis Accelerometer &
+                                                Gyroscope (I2C: 0x68)
+
+  **Environmental**     BME280                  Temp, Humidity, Pressure
+                                                (I2C: 0x77)
+
+  **Actuator Control**  2N2222 + Flyback Diode  Low-Side Switch para
+                                                relés/motores (GPIO 11)
+
+  **Audio Input**       Header for INMP441      Puerto I2S para micrófono
+                                                MEMS
+
+  **Expansion**         8-Pin Header            GPIOs adicionales +
+                                                rieles 5V/3.3V
+  -----------------------------------------------------------------------
+
+### 📂 **Manufacturing Files**
+
+Archivos Gerber listos para producción:
+
+➡️ **[Download Gerbers v1.1
+(ZIP)](hardware/gerbers/Gerbers_SensorHub_v1.1.zip)**
+
+------------------------------------------------------------------------
+
+## 📂 **Project Structure (ESP-IDF Standard)**
+
+``` text
 01-sensor-hub/
 ├── components/        # Modular Drivers (C++ Classes)
 │   ├── bme280/        # I2C Driver for Environmental Sensor
@@ -40,46 +90,76 @@ The project follows the official **Espressif IoT Development Framework** modular
 │   └── wifi_connect/  # WiFi Station Manager
 ├── main/              # Application Entry Point (FreeRTOS Tasks)
 ├── sensor-dashboard/  # React Frontend (Vite + MQTT.js)
+├── hardware/          # KiCad 9 Design Files (Schematic, PCB, Gerbers)
 ├── tools/             # Python Scripts for data ingestion testing
 └── docs/              # Documentation & assets
+```
 
-🔧 Setup Instructions
+------------------------------------------------------------------------
 
-1. Firmware Deployment (ESP32)
+# 🔧 **Setup Instructions**
 
-1.Prerequisite: VS Code with Espressif IDF Extension (v5.x).
-2.Open the project root in VS Code.
-3.Configure Wi-Fi credentials in components/wifi_connect/include/wifi_connect.h.
-4.Configure MQTT credentials in main/main.cpp.
-5.Click the Build icon (Cylinder) to compile.
-6.Click Flash (Lightning) to upload to the board.
+------------------------------------------------------------------------
 
-2. Dashboard Setup (React)
+## 1️⃣ **Firmware Deployment (ESP32-S3)**
 
-1.Navigate to the frontend folder:
-cd sensor-dashboard
+**Prerequisite:** VS Code + Espressif IDF Extension (v5.x)
 
-2.Install dependencies:
-npm install
+1.  Abre el proyecto en VS Code\
+2.  Configura WiFi en:\
+    `components/wifi_connect/include/wifi_connect.h`\
+3.  Configura credenciales MQTT en:\
+    `main/main.cpp`\
+4.  Compila usando el icono **Build (Cylinder)**\
+5.  Flashea el firmware con **Flash (Lightning)**
 
-3.Start development server:
-npm run dev
+------------------------------------------------------------------------
 
-4.Access dashboard at http://localhost:5173.
+## 2️⃣ **Dashboard Setup (React)**
 
-3. HiveMQ Configuration
+1.  Entra al directorio:
 
-1.Create a free HiveMQ Cloud cluster.
-2.Create credentials (User/Password) in "Access Management".
-3.Update App.jsx (Frontend) and main.cpp (Firmware) with your cluster URL.
+    ``` bash
+    cd sensor-dashboard
+    ```
 
-📊 Data Flow Architecture
-1.Sensor Acquisition: BME280 & MPU6050 collect raw data via I2C Bus (Shared).
-2.Edge Processing: ESP32-S3 aggregates readings and serializes to JSON using cJSON.
-3.Cloud Routing: Secure MQTT (TLS 1.2) publish to HiveMQ Cloud Broker.
-4.Real-Time Display: React Frontend subscribes to MQTT topic via WebSockets (WSS) and renders data instantly.
+2.  Instala dependencias:
 
-📜 License
-MIT License - Open Source
+    ``` bash
+    npm install
+    ```
 
+3.  Ejecuta el servidor de desarrollo:
 
+    ``` bash
+    npm run dev
+    ```
+
+4.  Abre en el navegador:\
+    **http://localhost:5173**
+
+------------------------------------------------------------------------
+
+## 3️⃣ **HiveMQ Cloud Configuration**
+
+1.  Crea un cluster gratuito en HiveMQ Cloud\
+2.  Genera credenciales (User/Password)\
+3.  Actualiza los archivos:
+    -   Frontend: `App.jsx`\
+    -   Firmware: `main.cpp`
+
+------------------------------------------------------------------------
+
+# 📊 **Data Flow Architecture**
+
+1.  **Sensor Acquisition:** BME280 & MPU6050 → Bus I²C\
+2.  **Edge Processing:** ESP32-S3 serializa lecturas en JSON (cJSON)\
+3.  **Cloud Routing:** Publicación segura vía MQTT (TLS 1.2) a HiveMQ
+    Cloud\
+4.  **Real-Time Display:** React + MQTT.js → WebSockets (WSS)
+
+------------------------------------------------------------------------
+
+# 📜 **License**
+
+**MIT License --- Open Source**
