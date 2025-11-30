@@ -76,7 +76,7 @@ etapa de potencia y puertos de expansión.
 Archivos Gerber listos para producción:
 
 ➡️ **[Download Gerbers v1.1
-(ZIP)](hardware/gerbers/Gerbers_SensorHub_v1.1.zip)**
+(ZIP)](hardware/Gerbers/Gerbers_SensorHub_v1.1.zip)**
 
 ------------------------------------------------------------------------
 
